@@ -55,14 +55,13 @@ class DefaultFieldDeserializer:
 @adapter(ITextLine, IDexterityContent, IBrowserRequest)
 class TextLineFieldDeserializer(DefaultFieldDeserializer):
     def __call__(self, value):
-        if isinstance(value, str):
-            value = IFromUnicode(self.field).fromUnicode(value)
-
         # Mimic what z3c.form does in it's BaseDataConverter.
         if isinstance(value, str):
             value = value.strip()
             if value == "":
                 value = self.field.missing_value
+            else:
+                value = IFromUnicode(self.field).fromUnicode(value)
 
         self.field.validate(value)
         return value
