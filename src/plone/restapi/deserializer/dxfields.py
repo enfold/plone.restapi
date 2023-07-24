@@ -139,7 +139,7 @@ class ChoiceFieldDeserializer(DefaultFieldDeserializer):
             value = value["token"]
         if IVocabularyTokenized.providedBy(self.field.vocabulary):
             try:
-                value = self.field.vocabulary.getTermByToken(value).value
+                value = self.field.vocabulary.getTermByToken(value).token
             except LookupError:
                 pass
 
