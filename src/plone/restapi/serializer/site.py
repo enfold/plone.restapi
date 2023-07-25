@@ -3,16 +3,18 @@ from importlib import import_module
 from plone.autoform.interfaces import READ_PERMISSIONS_KEY
 from plone.dexterity.utils import iterSchemata
 from plone.restapi.batching import HypermediaBatch
+from plone.restapi.bbb import IPloneSiteRoot
+from plone.restapi.blocks import visit_blocks, iter_block_transform_handlers
 from plone.restapi.interfaces import IFieldSerializer
 from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.interfaces import ISerializeToJsonSummary
-from plone.restapi.serializer.blocks import apply_block_serialization_transforms
+from plone.restapi.interfaces import IBlockFieldSerializationTransformer
 from plone.restapi.serializer.converters import json_compatible
 from plone.restapi.serializer.expansion import expandable_elements
 from plone.restapi.services.locking import lock_info
+from plone.restapi.serializer.utils import get_portal_type_title
 from plone.supermodel.utils import mergedTaggedValueDict
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import IPloneSiteRoot
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
@@ -23,6 +25,7 @@ from zope.schema import getFields
 from zope.security.interfaces import IPermission
 
 import json
+
 
 HAS_PLONE_6 = getattr(
     import_module("Products.CMFPlone.factory"), "PLONE60MARKER", False
@@ -61,6 +64,7 @@ class SerializeSiteRootToJson:
             "@id": self.context.absolute_url(),
             "id": self.context.id,
             "@type": "Plone Site",
+            "type_title": get_portal_type_title("Plone Site"),
             "title": self.context.Title(),
             "parent": {},
             "is_folderish": True,
@@ -80,7 +84,6 @@ class SerializeSiteRootToJson:
                 read_permissions = mergedTaggedValueDict(schema, READ_PERMISSIONS_KEY)
 
                 for name, field in getFields(schema).items():
-
                     if not self.check_permission(
                         read_permissions.get(name), self.context
                     ):
@@ -138,8 +141,12 @@ class SerializeSiteRootToJson:
     def serialize_blocks(self):
         # This is only for below 6
         blocks = json.loads(getattr(self.context, "blocks", "{}"))
-        if not blocks:
-            return blocks
-        for id, block_value in blocks.items():
-            blocks[id] = apply_block_serialization_transforms(block_value, self.context)
+        for block in visit_blocks(self.context, blocks):
+            new_block = block.copy()
+            for handler in iter_block_transform_handlers(
+                self.context, block, IBlockFieldSerializationTransformer
+            ):
+                new_block = handler(new_block)
+            block.clear()
+            block.update(new_block)
         return blocks

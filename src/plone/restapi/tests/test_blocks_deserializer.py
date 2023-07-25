@@ -269,6 +269,35 @@ class TestBlocksDeserializer(unittest.TestCase):
             self.portal.doc1.absolute_url(),
         )
 
+    def test_blocks_custom_block_resolve_standard_fields_nested(self):
+        self.deserialize(
+            blocks={
+                "123": {
+                    "@type": "foo",
+                    "bar": [{"url": self.portal.doc1.absolute_url()}],
+                }
+            }
+        )
+        doc_uid = IUUID(self.portal.doc1)
+
+        self.assertEqual(
+            self.portal.doc1.blocks["123"]["bar"][0]["url"], f"../resolveuid/{doc_uid}"
+        )
+
+        self.deserialize(
+            blocks={
+                "123": {
+                    "@type": "foo",
+                    "bar": [{"href": self.portal.doc1.absolute_url()}],
+                }
+            }
+        )
+        doc_uid = IUUID(self.portal.doc1)
+
+        self.assertEqual(
+            self.portal.doc1.blocks["123"]["bar"][0]["href"], f"../resolveuid/{doc_uid}"
+        )
+
     def test_deserialize_blocks_smart_href_array_volto_object_browser(self):
         self.deserialize(
             blocks={
@@ -282,6 +311,22 @@ class TestBlocksDeserializer(unittest.TestCase):
 
         self.assertEqual(
             self.portal.doc1.blocks["123"]["href"][0]["@id"],
+            f"../resolveuid/{doc_uid}",
+        )
+
+    def test_deserialize_blocks_smart_href_array_volto_object_browser_nested(self):
+        self.deserialize(
+            blocks={
+                "123": {
+                    "@type": "foo",
+                    "bar": [{"href": [{"@id": self.portal.doc1.absolute_url()}]}],
+                }
+            }
+        )
+        doc_uid = IUUID(self.portal.doc1)
+
+        self.assertEqual(
+            self.portal.doc1.blocks["123"]["bar"][0]["href"][0]["@id"],
             f"../resolveuid/{doc_uid}",
         )
 
@@ -552,3 +597,9 @@ class TestBlocksDeserializer(unittest.TestCase):
         cell = rows[1]["cells"][0]
         link = cell["value"][0]["children"][1]["data"]["url"]
         self.assertTrue(link.startswith("../resolveuid/"))
+
+    def test_deserialize_url_with_image_scales(self):
+        blocks = {"123": {"url": self.image.absolute_url(), "image_scales": {}}}
+        res = self.deserialize(blocks=blocks)
+        self.assertTrue(res.blocks["123"]["url"].startswith("../resolveuid/"))
+        self.assertNotIn("image_scales", res.blocks["123"])

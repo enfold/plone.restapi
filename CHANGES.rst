@@ -8,6 +8,209 @@ Changelog
 
 .. towncrier release notes start
 
+8.42.0 (2023-07-17)
+-------------------
+
+New features:
+
+
+- When serializing blocks, `image_scales` is now added to blocks that contain a resolveuid-based `url`.
+  When deserializing blocks, `image_scales` is removed. @davisagli (#1642)
+
+
+Bug fixes:
+
+
+- Remove the hard code dependency by plone.app.multilingual, use it conditionaly instead
+  [@folix-01] (#1639)
+- Fix timezone of dates for revisions in the `@history` service. @davisagli (#1647)
+- Fix types expander in root for Plone 5.2 (for non-Dexterity Plone Site Root) @sneridagh (#1669)
+
+
+Internal:
+
+
+- Updated package installation to use constraints.txt for black package, ensuring compatibility and consistent versions. @Akshat2Jain (#1671)
+- Update Makefile and buildout to use Plone 6.0.6. @davisagli (#1672)
+
+
+Documentation:
+
+
+- added instruction to ensure consistent code formatting. @Akshat2Jain (#1664)
+
+
+8.41.0 (2023-06-29)
+-------------------
+
+New features:
+
+
+- Add `visit_blocks` util for finding all nested blocks. @davisagli (#1648)
+
+
+Bug fixes:
+
+
+- Fix path2uid method, to handle suffix with non-traversable objects. @cekk @mamico (#1649)
+
+
+Internal:
+
+
+- Allow GHA tests to run on PRs from forks. @Akshat2Jain (#1656)
+
+
+Documentation:
+
+
+- Fix html_meta tags, and remove stray spaces that prevented the glossary from rendering. @stevepiercy (#1663)
+
+
+8.40.0 (2023-06-06)
+-------------------
+
+New features:
+
+
+- Added `@site` and `@navroot` endpoints. @erral (#1464)
+
+
+Bug fixes:
+
+
+- Validate input to the `@querystring-search` service. Input which can't be processed now results in a 400 response instead of 500. @davisagli (#1653)
+
+
+8.39.2 (2023-06-01)
+-------------------
+
+Bug fixes:
+
+
+- Fix content serializer with an old version of an item that was renamed. @davisagli (#1651)
+
+
+8.39.1 (2023-05-30)
+-------------------
+
+Bug fixes:
+
+
+- Fix possible startup error by explicitly loading ``plone.app.contentrules`` zcml.
+  Also: only load code related to contentrules when this package is available.
+  [maurits] (#1644)
+
+
+8.39.0 (2023-05-23)
+-------------------
+
+New features:
+
+
+- Create relations service. Query, add, delete. @ksuess (#1432)
+
+
+8.38.0 (2023-05-19)
+-------------------
+
+New features:
+
+
+- Add portal_type title (`type_title`) to content response @razvanMiu @nileshgulia1 (#1355)
+- Added support for nested schemas with resolveuid deserializer @JeffersonBledsoe (#1595)
+
+
+Bug fixes:
+
+
+- Fix missing metadata_fields in Response via GET Request to Endpoint /@querystring-search @1letter (#1628)
+- Respect Password Policy @tschorr (#1630)
+
+
+Internal:
+
+
+- Update buildout and requirements to Plone-6.0.4 @1letter (#1632)
+
+
+8.37.0 (2023-04-19)
+-------------------
+
+New features:
+
+
+- Apply a cache ruleset to the /@querystring-search endpoint.
+  [ericof] (#1626)
+
+
+8.36.1 (2023-04-17)
+-------------------
+
+Bug fixes:
+
+
+- Fix bugs in handling parameters when the `@querystringsearch` endpoint is called with the GET method. @davisagli (#1621)
+
+
+8.36.0 (2023-04-07)
+-------------------
+
+New features:
+
+
+- Add UID to relationvalue_converter summary. [ksuess] (#1605)
+- Add querystring_search get method. [robgietema] (#1616)
+
+
+Bug fixes:
+
+
+- Fix a bunch of deprecation warnings in a Plone 5.2 compatible way.
+  Applied proper isort.
+  Fixed unclosed file issues in a test.
+  Added Python 3.11 to test matrix.
+  [jensens] (#1606)
+- No longer declare support for Python 3.6 (it was already not tested). [davisagli] (#1615)
+- Fixed encoding issue on Python 3 for some mail servers.
+  This could result in missing characters in an email body.
+  [maurits] (#3754)
+
+
+8.35.3 (2023-03-23)
+-------------------
+
+Bug fixes:
+
+
+- Fix UnboundLocalError in RelationChoice deserializer. @davisagli (#1600)
+
+
+Internal:
+
+
+- Fixed tests in combination with newer ``plone.app.z3cform``.
+  [maurits] (#162)
+
+
+Documentation:
+
+
+- Update intersphinx_mapping for training @ksuess (#1596)
+
+
+8.35.2 (2023-03-10)
+-------------------
+
+Bug fixes:
+
+
+- Fix missing `Decimal` field deserializer.
+  [jensens] (#903)
+- Fix translation of the error message for a password that is too short while
+  adding a user. [davisagli] (#4395)
+
+
 8.35.1 (2023-03-02)
 -------------------
 

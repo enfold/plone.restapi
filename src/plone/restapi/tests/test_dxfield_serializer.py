@@ -273,7 +273,9 @@ class TestDexterityFieldSerializing(TestCase):
             {
                 "@id": "http://nohost/plone/doc2",
                 "@type": "DXTestDocument",
+                "UID": doc2.UID(),
                 "title": "Referenceable Document",
+                "type_title": "DX Test Document",
                 "description": "Description 2",
                 "review_state": "private",
             },
@@ -304,14 +306,18 @@ class TestDexterityFieldSerializing(TestCase):
                 {
                     "@id": "http://nohost/plone/doc2",
                     "@type": "DXTestDocument",
+                    "UID": doc2.UID(),
                     "title": "Referenceable Document",
                     "description": "Description 2",
+                    "type_title": "DX Test Document",
                     "review_state": "private",
                 },
                 {
                     "@id": "http://nohost/plone/doc3",
                     "@type": "DXTestDocument",
+                    "UID": doc3.UID(),
                     "title": "Referenceable Document",
+                    "type_title": "DX Test Document",
                     "description": "Description 3",
                     "review_state": "private",
                 },
